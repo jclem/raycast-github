@@ -1,0 +1,50 @@
+{
+  "name": "github",
+  "title": "GitHub",
+  "description": "Provides commands for viewing and interacting with GitHub resources",
+  "icon": "command-icon.png",
+  "author": "jclem",
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "codespaces",
+      "title": "Codespaces",
+      "subtitle": "Open and control Codespaces",
+      "description": "This command provides a way to search and interact with your GitHub Codespaces",
+      "mode": "view"
+    }
+  ],
+  "dependencies": {
+    "@octokit/rest": "^18.12.0",
+    "@raycast/api": "^1.25.1",
+    "lodash": "^4.17.21"
+  },
+  "preferences": [
+    {
+      "name": "pat",
+      "type": "password",
+      "required": true,
+      "title": "Personal Access Token",
+      "description": "A personal access token with access to your GitHub resources used by this extension"
+    }
+  ],
+  "devDependencies": {
+    "@types/lodash": "^4.14.176",
+    "@types/node": "~16.10.0",
+    "@types/react": "^17.0.28",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-github": "^4.3.2",
+    "eslint-plugin-react": "^7.26.1",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "prettier": "^2.4.1",
+    "react-devtools": "^4.19.2",
+    "typescript": "^4.5.0-dev.20211027"
+  },
+  "scripts": {
+    "build": "ray build -e dist",
+    "dev": "ray develop"
+  }
+}
