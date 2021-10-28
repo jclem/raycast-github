@@ -50,6 +50,7 @@ function useAllSpaces(): [Codespace[], boolean] {
   const [isLoading, setIsLoading] = useState(true)
   const didFetchOnce = useRef(false)
 
+  // Use the cached spaces if we have yet to complete one fetch.
   useEffect(() => {
     const loadSpaces = async () => {
       const storedSpaces = await getLocalStorageItem<string>('spaces')
@@ -63,6 +64,7 @@ function useAllSpaces(): [Codespace[], boolean] {
     loadSpaces()
   }, [])
 
+  // On an interval, fetch all spaces and update the cache.
   useEffect(() => {
     const fetchCodespaces = async () => {
       const resp = await octokit.request('GET /user/codespaces')
@@ -88,6 +90,7 @@ function useAllSpaces(): [Codespace[], boolean] {
 function useFilteredSpaces(allSpaces: Codespace[], query: string) {
   const [filteredSpaces, setFilteredSpaces] = useState<Codespace[]>([])
 
+  // Filter all of the spaces by the user's query.
   useEffect(() => {
     setFilteredSpaces(
       allSpaces.filter(
