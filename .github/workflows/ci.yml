@@ -1,0 +1,18 @@
+name: Run code checks
+
+on:
+  push: {branches: [main]}
+  pull_request: {branches: [main]}
+  workflow_dispatch:
+
+jobs:
+  lint:
+    name: Run linters and formatting checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout ref
+        uses: actions/checkout@v2
+      - name: Preparation
+        uses: ./.github/actions/setup
+      - name: Run checks
+        run: npm run check

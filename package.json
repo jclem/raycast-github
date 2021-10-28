@@ -39,12 +39,18 @@
     "eslint-plugin-github": "^4.3.2",
     "eslint-plugin-react": "^7.26.1",
     "eslint-plugin-react-hooks": "^4.2.0",
+    "husky": "^7.0.4",
+    "npm-run-all": "^4.1.5",
     "prettier": "^2.4.1",
     "react-devtools": "^4.19.2",
     "typescript": "^4.5.0-dev.20211027"
   },
   "scripts": {
+    "prepare": "husky install",
     "build": "ray build -e dist",
-    "dev": "ray develop"
+    "dev": "ray develop",
+    "check": "run-p -l --continue-on-error --aggregate-output check:*",
+    "check:format": "prettier . --check",
+    "check:lint": "eslint ."
   }
 }
