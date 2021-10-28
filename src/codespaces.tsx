@@ -1,7 +1,7 @@
+import {List, getLocalStorageItem, setLocalStorageItem} from '@raycast/api'
 import {ReactElement, useEffect, useRef, useState} from 'react'
 
 import CodespaceItem from './components/codespace-item'
-import {List} from '@raycast/api'
 import {octokit} from './lib/octokit'
 
 export interface Codespace {
@@ -44,6 +44,20 @@ function useAllSpaces(): [Codespace[], boolean] {
   const [allSpaces, setAllSpaces] = useState<Codespace[]>([])
   const refetchInterval = useRef<NodeJS.Timeout | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const didFetchOnce = useRef(false)
+
+  useEffect(() => {
+    const loadSpaces = async () => {
+      const storedSpaces = await getLocalStorageItem<string>('spaces')
+
+      if (!didFetchOnce.current && storedSpaces) {
+        const parsedSpaces = JSON.parse(storedSpaces) as Codespace[]
+        setAllSpaces(parsedSpaces)
+      }
+    }
+
+    loadSpaces()
+  }, [])
 
   useEffect(() => {
     const fetchCodespaces = async () => {
@@ -51,6 +65,7 @@ function useAllSpaces(): [Codespace[], boolean] {
       const spaces = resp.data.codespaces as Codespace[]
       setAllSpaces(spaces)
       setIsLoading(false) // We only use this for initial loading, so it's okay to set it as false repeatedly.
+      setLocalStorageItem('spaces', JSON.stringify(spaces))
     }
 
     refetchInterval.current = setInterval(() => {
