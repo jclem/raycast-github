@@ -13,11 +13,20 @@
       "description": "This command provides a way to search and interact with your GitHub Codespaces",
       "icon": "icons/codespaces.png",
       "mode": "view"
+    },
+    {
+      "name": "search-issues",
+      "title": "Search Issues",
+      "subtitle": "Search issues and pull requests on GitHub",
+      "description": "This command provides a way to search issues and pull requests on GitHub",
+      "icon": "icons/search.png",
+      "mode": "view"
     }
   ],
   "dependencies": {
     "@octokit/rest": "^18.12.0",
     "@raycast/api": "^1.25.1",
+    "date-fns": "^2.25.0",
     "lodash": "^4.17.21"
   },
   "preferences": [

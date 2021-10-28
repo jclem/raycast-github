@@ -20,6 +20,7 @@
   "rules": {
     "camelcase": "off",
     "import/no-unresolved": "off",
-    "react/react-in-jsx-scope": "off"
+    "react/react-in-jsx-scope": "off",
+    "@typescript-eslint/no-shadow": "off"
   }
 }
