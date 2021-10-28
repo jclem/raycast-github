@@ -1,0 +1,47 @@
+#!/usr/bin/env node
+
+const cheerio = require('cheerio')
+const fs = require('fs')
+const path = require('path')
+const sharp = require('sharp')
+
+const svgDirectoryPath = path.join(
+  __dirname,
+  '..',
+  'node_modules/@primer/octicons/build/svg'
+)
+
+const pngDirectoryPath = path.join(__dirname, '..', 'assets', 'icons')
+const svgFileNames = fs.readdirSync(svgDirectoryPath)
+
+convertSVGs()
+  .then(() => process.exit(0))
+  .catch(err => {
+    // eslint-disable-next-line no-console
+    console.error(err)
+    process.exit(1)
+  })
+
+function convertSVGs() {
+  return Promise.all(
+    svgFileNames
+      .filter(svgFileName => svgFileName.endsWith('-24.svg'))
+      .map(async svgFileName => {
+        const svgPath = path.join(svgDirectoryPath, svgFileName)
+        const svgName = path.parse(svgPath).name.replace('-24', '')
+        const pngBase = `${svgName}.png`
+        const pngDarkBase = `${svgName}@dark.png`
+        const pngPath = path.join(pngDirectoryPath, pngBase)
+        const pngDarkPath = path.join(pngDirectoryPath, pngDarkBase)
+
+        const svgText = (await fs.promises.readFile(svgPath)).toString('utf-8')
+        const $svg = cheerio.load(svgText, {xmlMode: true})
+        const svgContent = Buffer.from($svg.html())
+        $svg('svg').attr('fill', '#fff')
+        const svgDarkContent = Buffer.from($svg.html())
+
+        await sharp(svgContent).png().toFile(pngPath)
+        await sharp(svgDarkContent).png().toFile(pngDarkPath)
+      })
+  )
+}

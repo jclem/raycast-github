@@ -2,6 +2,7 @@ import {ActionPanel, ListItem, OpenInBrowserAction} from '@raycast/api'
 
 import {Codespace} from '../codespaces'
 import {ReactElement} from 'react'
+import icon from '../lib/icon'
 import {octokit} from '../lib/octokit'
 
 interface Props {
@@ -30,10 +31,26 @@ function CodespaceActions({space}: Props): ReactElement {
 
   return (
     <ActionPanel>
-      <OpenInBrowserAction title="Open in VSCode" url={codespaceVSCode} />
-      <OpenInBrowserAction title="Open in browser" url={space.web_url} />
-      <ActionPanel.Item title="Start Codespace" onAction={startCodespace} />
-      <ActionPanel.Item title="Stop Codespace" onAction={stopCodespace} />
+      <OpenInBrowserAction
+        title="Open in VSCode"
+        url={codespaceVSCode}
+        icon={icon('code')}
+      />
+      <OpenInBrowserAction
+        title="Open in browser"
+        url={space.web_url}
+        icon={icon('browser')}
+      />
+      <ActionPanel.Item
+        title="Start Codespace"
+        onAction={startCodespace}
+        icon={icon('play')}
+      />
+      <ActionPanel.Item
+        title="Stop Codespace"
+        onAction={stopCodespace}
+        icon={icon('stop')}
+      />
     </ActionPanel>
   )
 }
