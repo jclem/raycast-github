@@ -50,6 +50,7 @@
     "build": "ray build -e dist",
     "dev": "ray develop",
     "check": "run-p -l --continue-on-error --aggregate-output check:*",
+    "check:build": "tsc --noEmit",
     "check:format": "prettier . --check",
     "check:lint": "eslint ."
   }
