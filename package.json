@@ -53,7 +53,7 @@
   },
   "scripts": {
     "prepare": "husky install",
-    "build": "run-p -l --aggregate-output build:*",
+    "build": "run-p -l --aggregate-output --continue-on-error build:*",
     "build:extension": "ray build -e dist",
     "build:octicons": "rm -f assets/icons/*.png && script/build-icons",
     "dev": "ray develop",
