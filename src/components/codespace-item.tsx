@@ -18,6 +18,7 @@ export default function CodespaceItem({space}: Props): ReactElement {
       key={space.id}
       title={space.repository.full_name}
       subtitle={space.machine.display_name}
+      icon={space.repository.owner.avatar_url}
       accessoryTitle={space.state}
       actions={<CodespaceActions space={space} />}
     />

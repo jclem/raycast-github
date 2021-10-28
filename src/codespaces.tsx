@@ -9,6 +9,9 @@ export interface Codespace {
   name: string
   repository: {
     full_name: string
+    owner: {
+      avatar_url: string
+    }
   }
   machine: {
     display_name: string
