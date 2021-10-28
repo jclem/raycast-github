@@ -14,6 +14,7 @@ export interface Codespace {
     display_name: string
   }
   state: string
+  url: string
   web_url: string
   start_url: string
   stop_url: string

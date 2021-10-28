@@ -27,6 +27,7 @@ export default function CodespaceItem({space}: Props): ReactElement {
 function CodespaceActions({space}: Props): ReactElement {
   const startCodespace = () => octokit.request(`POST ${space.start_url}`)
   const stopCodespace = () => octokit.request(`POST ${space.stop_url}`)
+  const deleteCodespace = () => octokit.request(`DELETE ${space.url}`)
   const codespaceVSCode = `vscode://github.codespaces/connect?name=${space.name}`
 
   return (
@@ -36,20 +37,33 @@ function CodespaceActions({space}: Props): ReactElement {
         url={codespaceVSCode}
         icon={icon('code')}
       />
+
       <OpenInBrowserAction
         title="Open in browser"
         url={space.web_url}
         icon={icon('browser')}
       />
+
+      {space.state === 'Shutdown' && (
+        <ActionPanel.Item
+          title="Start Codespace"
+          onAction={startCodespace}
+          icon={icon('play')}
+        />
+      )}
+
+      {space.state !== 'Shutdown' && (
+        <ActionPanel.Item
+          title="Stop Codespace"
+          onAction={stopCodespace}
+          icon={icon('stop')}
+        />
+      )}
+
       <ActionPanel.Item
-        title="Start Codespace"
-        onAction={startCodespace}
-        icon={icon('play')}
-      />
-      <ActionPanel.Item
-        title="Stop Codespace"
-        onAction={stopCodespace}
-        icon={icon('stop')}
+        title="Delete Codespace"
+        onAction={deleteCodespace}
+        icon={icon('trash')}
       />
     </ActionPanel>
   )
