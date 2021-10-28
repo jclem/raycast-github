@@ -1,8 +1,10 @@
 import {List, getLocalStorageItem, setLocalStorageItem} from '@raycast/api'
-import {ReactElement, useEffect, useRef, useState} from 'react'
+import {ReactElement, useEffect, useState} from 'react'
 
 import CodespaceItem from './components/codespace-item'
 import {octokit} from './lib/octokit'
+import {useQuery} from 'react-query'
+import withQueryClient from './components/with-query-client'
 
 export interface Codespace {
   id: number
@@ -23,14 +25,11 @@ export interface Codespace {
   stop_url: string
 }
 
-/** Frequency with which we refresh our Codespaces list */
-const refreshInterval = 1_000
-
 /**
  * A command that searches the user's Codespaces and allows them to be opened
  * and controlled.
  */
-export default function Codespaces(): ReactElement {
+export default withQueryClient(function Codespaces(): ReactElement {
   const [query, setQuery] = useState('')
   const [allSpaces, isLoading] = useAllSpaces()
   const filteredSpaces = useFilteredSpaces(allSpaces, query)
@@ -42,47 +41,46 @@ export default function Codespaces(): ReactElement {
       ))}
     </List>
   )
-}
+})
 
 function useAllSpaces(): [Codespace[], boolean] {
   const [allSpaces, setAllSpaces] = useState<Codespace[]>([])
-  const refetchInterval = useRef<NodeJS.Timeout | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const didFetchOnce = useRef(false)
+
+  const {data, isLoading} = useQuery<Codespace[]>(
+    ['codespaces'],
+    async () => {
+      const resp = await octokit.request('GET /user/codespaces')
+      const spaces = resp.data.codespaces as Codespace[]
+      return spaces
+    },
+    {
+      refetchInterval: 1_000,
+      keepPreviousData: true
+    }
+  )
 
   // Use the cached spaces if we have yet to complete one fetch.
   useEffect(() => {
     const loadSpaces = async () => {
       const storedSpaces = await getLocalStorageItem<string>('spaces')
 
-      if (!didFetchOnce.current && storedSpaces) {
+      if (isLoading && storedSpaces) {
         const parsedSpaces = JSON.parse(storedSpaces) as Codespace[]
         setAllSpaces(parsedSpaces)
       }
     }
 
     loadSpaces()
-  }, [])
+  }, [isLoading])
 
-  // On an interval, fetch all spaces and update the cache.
+  // Update our state variable when data updates (we do this because we have an
+  // async effect also potentially updating state).
   useEffect(() => {
-    const fetchCodespaces = async () => {
-      const resp = await octokit.request('GET /user/codespaces')
-      const spaces = resp.data.codespaces as Codespace[]
-      setAllSpaces(spaces)
-      setIsLoading(false) // We only use this for initial loading, so it's okay to set it as false repeatedly.
-      setLocalStorageItem('spaces', JSON.stringify(spaces))
+    if (data) {
+      setAllSpaces(data)
+      setLocalStorageItem('spaces', JSON.stringify(data))
     }
-
-    refetchInterval.current = setInterval(() => {
-      fetchCodespaces()
-    }, refreshInterval)
-
-    return () => {
-      if (refetchInterval.current != null)
-        clearInterval(refetchInterval.current)
-    }
-  }, [])
+  }, [data])
 
   return [allSpaces, isLoading]
 }
