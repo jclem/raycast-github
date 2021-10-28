@@ -2,7 +2,7 @@
   "name": "github",
   "title": "GitHub",
   "description": "Provides commands for viewing and interacting with GitHub resources",
-  "icon": "command-icon.png",
+  "icon": "mona.png",
   "author": "jclem",
   "license": "MIT",
   "commands": [
