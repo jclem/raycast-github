@@ -15,8 +15,8 @@ export interface Codespace {
       avatar_url: string
     }
   }
-  machine: {
-    display_name: string
+  git_status: {
+    ref: string
   }
   state: string
   url: string
@@ -45,7 +45,6 @@ export default withQueryClient(function Codespaces(): ReactElement {
 
 function useAllSpaces(): [Codespace[], boolean] {
   const [allSpaces, setAllSpaces] = useState<Codespace[]>([])
-
   const {data, isLoading} = useQuery<Codespace[]>(
     ['codespaces'],
     async () => {
@@ -95,7 +94,7 @@ function useFilteredSpaces(allSpaces: Codespace[], query: string) {
         s =>
           s.name.toLowerCase().includes(query) ||
           s.repository.full_name.toLowerCase().includes(query) ||
-          s.machine.display_name.toLowerCase().includes(query)
+          s.git_status.ref.toLowerCase().includes(query)
       )
     )
   }, [allSpaces, query])
