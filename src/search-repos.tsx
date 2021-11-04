@@ -1,8 +1,9 @@
 import proc from 'child_process'
 import {RestEndpointMethodTypes} from '@octokit/plugin-rest-endpoint-methods'
-import {ActionPanel, OpenInBrowserAction} from '@raycast/api'
+import {ActionPanel, OpenInBrowserAction, PushAction} from '@raycast/api'
 import {ReactElement} from 'react'
 import {Codespace} from './codespaces'
+import RepoDetail from './components/repo-detail'
 import Search from './components/search'
 import icon from './lib/icon'
 import {octokit} from './lib/octokit'
@@ -66,6 +67,16 @@ function RepoActions({item}: ActionsProps): ReactElement {
         title="Open in browser"
         url={item.html_url}
         icon={icon('browser')}
+      />
+
+      <PushAction
+        title="View details"
+        target={
+          <RepoDetail
+            repo={item.full_name}
+            actions={<RepoActions item={item} />}
+          />
+        }
       />
 
       <OpenInBrowserAction

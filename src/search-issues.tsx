@@ -1,5 +1,13 @@
 import {RestEndpointMethodTypes} from '@octokit/plugin-rest-endpoint-methods'
-import {ActionPanel, OpenInBrowserAction} from '@raycast/api'
+import {
+  ActionPanel,
+  Color,
+  ColorLike,
+  Detail,
+  ImageLike,
+  OpenInBrowserAction,
+  PushAction
+} from '@raycast/api'
 import {ReactElement} from 'react'
 import Search from './components/search'
 import icon from './lib/icon'
@@ -22,8 +30,8 @@ export default function IssueSearch(): ReactElement {
         return repos
       }}
       itemProps={result => {
-        const nwoMatch = result.html_url.match(
-          /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/issues\/\d+$/
+        const nwoMatch = result.repository_url.match(
+          /^https:\/\/api\.github\.com\/repos\/([^/]+)\/([^/]+)$/
         )
 
         if (!nwoMatch) {
@@ -37,7 +45,7 @@ export default function IssueSearch(): ReactElement {
           key: result.id,
           title: result.title,
           subtitle: result.user?.login,
-          icon: result.user?.avatar_url,
+          icon: issueIcon(result),
           accessoryTitle: nwo,
           accessoryIcon: `https://github.com/${owner}.png`
         }
@@ -47,6 +55,44 @@ export default function IssueSearch(): ReactElement {
   )
 }
 
+function issueIcon(issue: Issue): ImageLike {
+  let color: ColorLike | null = null
+
+  if (issue.draft && issue.state === 'open') {
+    color = null
+  } else {
+    switch (issue.state) {
+      case 'open':
+        color = Color.Green
+        break
+      case 'closed':
+        color = Color.Purple
+    }
+  }
+
+  if (issue.pull_request) {
+    if (issue.draft) {
+      return icon('git-pull-request-draft', color)
+    }
+
+    if (issue.closed_at) {
+      return icon('git-pull-request', color)
+    }
+
+    return icon('git-pull-request', color)
+  } else {
+    if (issue.draft) {
+      return icon('issue-draft', color)
+    }
+
+    if (issue.closed_at) {
+      return icon('issue-closed', color)
+    }
+
+    return icon('issue-opened', color)
+  }
+}
+
 function Actions({item}: ActionsProps): ReactElement {
   return (
     <ActionPanel>
@@ -54,6 +100,16 @@ function Actions({item}: ActionsProps): ReactElement {
         title="Open in browser"
         url={item.html_url}
         icon={icon('browser')}
+      />
+
+      <PushAction
+        title="View details"
+        target={
+          <Detail
+            markdown={`# ${item.title}\n\n${item.body}`}
+            actions={<Actions item={item} />}
+          />
+        }
       />
     </ActionPanel>
   )
