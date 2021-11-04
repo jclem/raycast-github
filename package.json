@@ -29,6 +29,17 @@
       ]
     },
     {
+      "name": "search-commits",
+      "title": "Search Commits",
+      "subtitle": "Search git commits on GitHub",
+      "description": "This command provides a way to search git commits on GitHub",
+      "icon": "icons/commit.png",
+      "mode": "view",
+      "keywords": [
+        "ghs"
+      ]
+    },
+    {
       "name": "search-repos",
       "title": "Search Repositories",
       "subtitle": "Search repositories on GitHub",
