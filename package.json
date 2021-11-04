@@ -16,6 +16,17 @@
       "keywords": [
         "ghcs"
       ]
+    },
+    {
+      "name": "search-repos",
+      "title": "Search Repositories",
+      "subtitle": "Search repositories on GitHub",
+      "description": "This command provides a way to search repositories on GitHub",
+      "icon": "icons/repo.png",
+      "mode": "view",
+      "keywords": [
+        "ghs"
+      ]
     }
   ],
   "dependencies": {
