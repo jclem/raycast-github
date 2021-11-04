@@ -1,37 +1,97 @@
+import proc from 'child_process'
 import {RestEndpointMethodTypes} from '@octokit/plugin-rest-endpoint-methods'
-import {List} from '@raycast/api'
-import {ReactElement, useState} from 'react'
-import {useQuery} from 'react-query'
-import RepoItem from './components/repo-item'
-import withQueryClient from './components/with-query-client'
-import {useDebouncedValue} from './hooks/use-debounced-value'
+import {ActionPanel, OpenInBrowserAction} from '@raycast/api'
+import {ReactElement} from 'react'
+import {Codespace} from './codespaces'
+import Search from './components/search'
+import icon from './lib/icon'
 import {octokit} from './lib/octokit'
 
 export type Repo =
   RestEndpointMethodTypes['search']['repos']['response']['data']['items'][number]
 
-export default withQueryClient(function Search(): ReactElement {
-  const [query, setQuery] = useState('')
-  const debouncedQuery = useDebouncedValue(query)
+interface ActionsProps {
+  item: Repo
+}
 
-  const {data, isFetching} = useQuery<Repo[]>(
-    ['search', 'repos', debouncedQuery],
-    async () => {
-      const resp = await octokit.search.repos({q: debouncedQuery})
-      const repos = resp.data.items
-      return repos
-    },
-    {
-      keepPreviousData: true,
-      enabled: debouncedQuery.trim() !== ''
-    }
+export default function RepoSearch(): ReactElement {
+  return (
+    <Search<Repo>
+      queryKey={query => ['search', 'repos', query]}
+      queryFn={async q => {
+        const resp = await octokit.search.repos({q})
+        const repos = resp.data.items
+        return repos
+      }}
+      itemProps={repo => ({
+        key: repo.id,
+        title: repo.full_name,
+        subtitle: repo.description ?? '',
+        icon: repo.owner?.avatar_url
+      })}
+      actions={RepoActions}
+    />
   )
+}
+
+function RepoActions({item}: ActionsProps): ReactElement {
+  const openOrCreateCodespace = async () => {
+    const codespaces: Codespace[] = (
+      await octokit.request(`GET /user/codespaces`)
+    ).data.codespaces
+
+    const codespace = codespaces.find(
+      c => c.repository.full_name === item.full_name
+    )
+
+    let codespaceVSCode: string
+
+    if (codespace) {
+      codespaceVSCode = `vscode://github.codespaces/connect?name=${codespace.name}`
+    } else {
+      const resp = await octokit.request(
+        `POST /repos/${item.full_name}/codespaces`,
+        {location: 'EastUs'}
+      )
+
+      codespaceVSCode = `vscode://github.codespaces/connect?name=${resp.data.name}`
+    }
+
+    proc.execSync(`open ${codespaceVSCode}`)
+  }
 
   return (
-    <List isLoading={isFetching} onSearchTextChange={setQuery}>
-      {data?.map(repo => (
-        <RepoItem key={repo.id} repo={repo} />
-      ))}
-    </List>
+    <ActionPanel>
+      <OpenInBrowserAction
+        title="Open in browser"
+        url={item.html_url}
+        icon={icon('browser')}
+      />
+
+      <OpenInBrowserAction
+        title="Open issues in browser"
+        url={`${item.html_url}/issues`}
+        icon={icon('issue-opened')}
+      />
+
+      <OpenInBrowserAction
+        title="Open pull requests in browser"
+        url={`${item.html_url}/pulls`}
+        icon={icon('git-pull-request')}
+      />
+
+      <OpenInBrowserAction
+        title="Open in GitHub.dev"
+        url={`https://github.dev/${item.full_name}`}
+        icon={icon('code')}
+        shortcut={{key: '.', modifiers: []}}
+      />
+
+      <ActionPanel.Item
+        title="Open or create Codespace"
+        onAction={openOrCreateCodespace}
+        icon={icon('codespaces')}
+      />
+    </ActionPanel>
   )
-})
+}

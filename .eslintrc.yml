@@ -27,3 +27,4 @@ rules:
       newlines-between: never
   react/react-in-jsx-scope: off
   sort-imports: off
+  '@typescript-eslint/no-shadow': off

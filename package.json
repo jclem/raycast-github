@@ -18,6 +18,17 @@
       ]
     },
     {
+      "name": "search-code",
+      "title": "Search Code",
+      "subtitle": "Search code on GitHub",
+      "description": "This command provides a way to search code on GitHub",
+      "icon": "icons/code.png",
+      "mode": "view",
+      "keywords": [
+        "ghs"
+      ]
+    },
+    {
       "name": "search-repos",
       "title": "Search Repositories",
       "subtitle": "Search repositories on GitHub",
