@@ -60,6 +60,17 @@
       "keywords": [
         "ghs"
       ]
+    },
+    {
+      "name": "search-users",
+      "title": "Search Users",
+      "subtitle": "Search users on GitHub",
+      "description": "This command provides a way to search users on GitHub",
+      "icon": "icons/person.png",
+      "mode": "view",
+      "keywords": [
+        "ghs"
+      ]
     }
   ],
   "dependencies": {
