@@ -12,7 +12,10 @@
       "subtitle": "Open and control GitHub Codespaces",
       "description": "This command provides a way to search and interact with your GitHub Codespaces",
       "icon": "icons/codespaces.png",
-      "mode": "view"
+      "mode": "view",
+      "keywords": [
+        "ghcs"
+      ]
     }
   ],
   "dependencies": {
