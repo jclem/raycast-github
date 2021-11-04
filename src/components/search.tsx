@@ -7,7 +7,7 @@ import withQueryClient from './with-query-client'
 interface Props<T> {
   queryKey: (query: string) => QueryKey
   queryFn: (query: string) => Promise<T[]>
-  itemProps: (item: T) => ListItemProps & {key: Key}
+  itemProps: (item: T) => (ListItemProps & {key: Key}) | null
   actions: (props: {item: T}) => ReactElement
 }
 
@@ -34,10 +34,13 @@ const SearchWrapper = withQueryClient<Props<any>>(function Search(
 
   return (
     <List isLoading={isFetching} onSearchTextChange={setQuery}>
-      {data?.map(item => (
-        // eslint-disable-next-line react/jsx-key
-        <List.Item {...props.itemProps(item)} actions={props.actions({item})} />
-      ))}
+      {data?.map(item => {
+        const itemProps = props.itemProps(item)
+
+        return itemProps ? (
+          <List.Item {...itemProps} actions={props.actions({item})} />
+        ) : null
+      })}
     </List>
   )
 })
