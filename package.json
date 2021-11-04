@@ -42,6 +42,7 @@
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-github": "^4.3.2",
+    "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-react": "^7.26.1",
     "eslint-plugin-react-hooks": "^4.2.0",
     "husky": "^7.0.4",
@@ -57,9 +58,12 @@
     "build:extension": "ray build -e dist",
     "build:octicons": "rm -f assets/icons/*.png && script/build-icons",
     "dev": "ray develop",
-    "check": "run-p -l --continue-on-error --aggregate-output check:*",
+    "check": "run-p --continue-on-error --aggregate-output check:*",
     "check:build": "tsc --noEmit",
-    "check:format": "prettier . --check",
-    "check:lint": "eslint ."
+    "check:format": "prettier . --check --loglevel=warn",
+    "check:lint": "eslint .",
+    "fix": "run-s --continue-on-error fix:*",
+    "fix:format": "prettier . --write --loglevel=warn",
+    "fix:lint": "eslint . --fix"
   }
 }

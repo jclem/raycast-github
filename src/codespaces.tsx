@@ -1,10 +1,10 @@
 import {List, getLocalStorageItem, setLocalStorageItem} from '@raycast/api'
 import {ReactElement, useEffect, useState} from 'react'
-
-import CodespaceItem from './components/codespace-item'
-import {octokit} from './lib/octokit'
 import {useQuery} from 'react-query'
+import CodespaceActions from './components/codespace-actions'
+import CodespaceItem from './components/codespace-item'
 import withQueryClient from './components/with-query-client'
+import {octokit} from './lib/octokit'
 
 export interface Codespace {
   id: number
@@ -33,12 +33,17 @@ export default withQueryClient(function Codespaces(): ReactElement {
   const [query, setQuery] = useState('')
   const [allSpaces, isLoading] = useAllSpaces()
   const filteredSpaces = useFilteredSpaces(allSpaces, query)
+  const showCreateCodespace = /^[^/]+\/[^/]+$/.test(query)
 
   return (
     <List isLoading={isLoading} onSearchTextChange={setQuery}>
-      {filteredSpaces.map(space => (
-        <CodespaceItem key={space.id} space={space} />
-      ))}
+      <List.Section title="Codespaces">
+        {filteredSpaces.map(space => (
+          <CodespaceItem key={space.id} space={space} />
+        ))}
+      </List.Section>
+
+      {showCreateCodespace && <CodespaceActions query={query} />}
     </List>
   )
 })

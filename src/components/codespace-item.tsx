@@ -1,7 +1,6 @@
 import {ActionPanel, ListItem, OpenInBrowserAction} from '@raycast/api'
-
-import {Codespace} from '../codespaces'
 import {ReactElement} from 'react'
+import {Codespace} from '../codespaces'
 import icon from '../lib/icon'
 import {octokit} from '../lib/octokit'
 
