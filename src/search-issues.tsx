@@ -4,11 +4,14 @@ import {
   Color,
   ColorLike,
   Detail,
+  getLocalStorageItem,
   ImageLike,
+  List,
   OpenInBrowserAction,
-  PushAction
+  PushAction,
+  setLocalStorageItem
 } from '@raycast/api'
-import {ReactElement} from 'react'
+import {Dispatch, FC, SetStateAction, useEffect, useState, VFC} from 'react'
 import Search from './components/search'
 import icon from './lib/icon'
 import {octokit} from './lib/octokit'
@@ -18,44 +21,76 @@ export type Issue =
 
 interface ActionsProps {
   item: Issue
+  query: string
 }
 
-export default function IssueSearch(): ReactElement {
+const IssueSearch: VFC = () => (
+  <Search<Issue>
+    queryKey={query => ['search', 'commits', query]}
+    queryFn={async q => {
+      const resp = await octokit.search.issuesAndPullRequests({q})
+      const repos = resp.data.items
+      return repos
+    }}
+    itemProps={result => {
+      const nwoMatch = result.repository_url.match(
+        /^https:\/\/api\.github\.com\/repos\/([^/]+)\/([^/]+)$/
+      )
+
+      if (!nwoMatch) {
+        return null
+      }
+
+      const [, owner, repo] = nwoMatch
+      const nwo = `${owner}/${repo}`
+
+      return {
+        key: result.id,
+        title: result.title,
+        subtitle: result.user?.login,
+        icon: issueIcon(result),
+        accessoryTitle: nwo,
+        accessoryIcon: `https://github.com/${owner}.png`
+      }
+    }}
+    actions={Actions}
+    noQuery={NoQuery}
+  />
+)
+
+export default IssueSearch
+
+const NoQuery: VFC<{setQuery: Dispatch<SetStateAction<string>>}> = ({
+  setQuery
+}) => {
+  const {savedQueries, deleteSavedQuery} = useSavedQueries()
+
   return (
-    <Search<Issue>
-      queryKey={query => ['search', 'commits', query]}
-      queryFn={async q => {
-        const resp = await octokit.search.issuesAndPullRequests({q})
-        const repos = resp.data.items
-        return repos
-      }}
-      itemProps={result => {
-        const nwoMatch = result.repository_url.match(
-          /^https:\/\/api\.github\.com\/repos\/([^/]+)\/([^/]+)$/
-        )
+    <List onSearchTextChange={setQuery}>
+      {savedQueries.map((query, i) => (
+        <List.Item
+          key={i}
+          title={query}
+          actions={
+            <ActionPanel>
+              <ActionPanel.Item
+                title="Search"
+                onAction={() => setQuery(query)}
+              />
 
-        if (!nwoMatch) {
-          return null
-        }
-
-        const [, owner, repo] = nwoMatch
-        const nwo = `${owner}/${repo}`
-
-        return {
-          key: result.id,
-          title: result.title,
-          subtitle: result.user?.login,
-          icon: issueIcon(result),
-          accessoryTitle: nwo,
-          accessoryIcon: `https://github.com/${owner}.png`
-        }
-      }}
-      actions={Actions}
-    />
+              <ActionPanel.Item
+                title="Delete saved query"
+                onAction={() => deleteSavedQuery(query)}
+              />
+            </ActionPanel>
+          }
+        />
+      ))}
+    </List>
   )
 }
 
-function issueIcon(issue: Issue): ImageLike {
+const issueIcon = (issue: Issue): ImageLike => {
   let color: ColorLike | null = null
 
   if (issue.draft && issue.state === 'open') {
@@ -71,29 +106,19 @@ function issueIcon(issue: Issue): ImageLike {
   }
 
   if (issue.pull_request) {
-    if (issue.draft) {
-      return icon('git-pull-request-draft', color)
-    }
-
-    if (issue.closed_at) {
-      return icon('git-pull-request', color)
-    }
-
+    if (issue.draft) return icon('git-pull-request-draft', color)
+    if (issue.closed_at) return icon('git-pull-request', color)
     return icon('git-pull-request', color)
   } else {
-    if (issue.draft) {
-      return icon('issue-draft', color)
-    }
-
-    if (issue.closed_at) {
-      return icon('issue-closed', color)
-    }
-
+    if (issue.draft) return icon('issue-draft', color)
+    if (issue.closed_at) return icon('issue-closed', color)
     return icon('issue-opened', color)
   }
 }
 
-function Actions({item}: ActionsProps): ReactElement {
+const Actions: FC<ActionsProps> = ({item, query}) => {
+  const {saveQuery} = useSavedQueries()
+
   return (
     <ActionPanel>
       <OpenInBrowserAction
@@ -107,10 +132,55 @@ function Actions({item}: ActionsProps): ReactElement {
         target={
           <Detail
             markdown={`# ${item.title}\n\n${item.body}`}
-            actions={<Actions item={item} />}
+            actions={<Actions item={item} query={query} />}
           />
         }
       />
+
+      <ActionPanel.Item title="Save query" onAction={() => saveQuery(query)} />
     </ActionPanel>
   )
+}
+
+const useSavedQueries = () => {
+  const [savedQueries, setSavedQueries] = useState<string[]>([])
+  const [reloadSavedQueriesSignal, setReloadSavedQueriesSignal] =
+    useState<number>(0)
+  const storageKey = 'saved-issues-queries'
+
+  const reloadSavedQueries = () =>
+    setReloadSavedQueriesSignal(signal => signal + 1)
+
+  const loadSavedQueries = async () => {
+    const json = await getLocalStorageItem<string>(storageKey)
+    const savedQueries = json ? JSON.parse(json) : []
+    return savedQueries
+  }
+
+  useEffect(() => {
+    const updateSavedQueriesState = async () => {
+      const savedQueries = await loadSavedQueries()
+      setSavedQueries(savedQueries)
+    }
+
+    updateSavedQueriesState()
+  }, [reloadSavedQueriesSignal])
+
+  const deleteSavedQuery = async (query: string) => {
+    const newSavedQueries = savedQueries.filter(q => q !== query)
+    setLocalStorageItem(storageKey, JSON.stringify(newSavedQueries))
+    reloadSavedQueries()
+  }
+
+  const saveQuery = async (query: string) => {
+    const newSavedQueries = [...savedQueries, query]
+    setLocalStorageItem(storageKey, JSON.stringify(newSavedQueries))
+    reloadSavedQueries()
+  }
+
+  return {
+    savedQueries,
+    saveQuery,
+    deleteSavedQuery
+  }
 }

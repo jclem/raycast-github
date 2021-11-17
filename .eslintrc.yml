@@ -2,7 +2,7 @@ root: true
 parser: '@typescript-eslint/parser'
 plugins:
   - '@typescript-eslint'
-  # - github
+  - github
   - import
 extends:
   - eslint:recommended
@@ -25,6 +25,7 @@ rules:
     - error
     - alphabetize: {order: asc}
       newlines-between: never
+  react/prop-types: off
   react/react-in-jsx-scope: off
   sort-imports: off
   '@typescript-eslint/no-shadow': off

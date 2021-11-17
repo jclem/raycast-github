@@ -1,5 +1,12 @@
 import {List, ListItemProps} from '@raycast/api'
-import {Key, ReactElement, useState} from 'react'
+import {
+  ComponentType,
+  Dispatch,
+  Key,
+  ReactElement,
+  SetStateAction,
+  useState
+} from 'react'
 import {QueryKey, useQuery} from 'react-query'
 import {useDebouncedValue} from '../hooks/use-debounced-value'
 import withQueryClient from './with-query-client'
@@ -8,7 +15,8 @@ interface Props<T> {
   queryKey: (query: string) => QueryKey
   queryFn: (query: string) => Promise<T[]>
   itemProps: (item: T) => (ListItemProps & {key: Key}) | null
-  actions: (props: {item: T}) => ReactElement
+  actions: ComponentType<{item: T; query: string}>
+  noQuery?: ComponentType<{setQuery: Dispatch<SetStateAction<string>>}>
 }
 
 export default function Search<T>(props: Props<T>) {
@@ -32,13 +40,20 @@ const SearchWrapper = withQueryClient<Props<any>>(function Search(
     }
   )
 
+  if (props.noQuery && query.trim() === '') {
+    return <props.noQuery setQuery={setQuery} />
+  }
+
   return (
     <List isLoading={isFetching} onSearchTextChange={setQuery}>
       {data?.map(item => {
         const itemProps = props.itemProps(item)
 
         return itemProps ? (
-          <List.Item {...itemProps} actions={props.actions({item})} />
+          <List.Item
+            {...itemProps}
+            actions={<props.actions item={item} query={query} />}
+          />
         ) : null
       })}
     </List>
