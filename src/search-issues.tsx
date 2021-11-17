@@ -11,7 +11,7 @@ import {
   PushAction,
   setLocalStorageItem
 } from '@raycast/api'
-import {Dispatch, FC, SetStateAction, useEffect, useState, VFC} from 'react'
+import {FC, useEffect, useState, VFC} from 'react'
 import Search from './components/search'
 import icon from './lib/icon'
 import {octokit} from './lib/octokit'
@@ -60,9 +60,7 @@ const IssueSearch: VFC = () => (
 
 export default IssueSearch
 
-const NoQuery: VFC<{setQuery: Dispatch<SetStateAction<string>>}> = ({
-  setQuery
-}) => {
+const NoQuery: VFC<{setQuery: (query: string) => void}> = ({setQuery}) => {
   const {savedQueries, deleteSavedQuery} = useSavedQueries()
 
   return (
