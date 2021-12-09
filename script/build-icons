@@ -40,8 +40,15 @@ function convertSVGs() {
         $svg('svg').attr('fill', '#fff')
         const svgDarkContent = Buffer.from($svg.html())
 
-        await sharp(svgContent).png().toFile(pngPath)
-        await sharp(svgDarkContent).png().toFile(pngDarkPath)
+        const defaultDPI = 72
+        const originalSize = 16
+        const targetSize = 512
+        const density = (defaultDPI * targetSize) / originalSize
+
+        await Promise.all([
+          sharp(svgContent, {density}).resize(512).png().toFile(pngPath),
+          sharp(svgDarkContent, {density}).resize(512).png().toFile(pngDarkPath)
+        ])
       })
   )
 }
