@@ -15,6 +15,20 @@ For now, you'll need to clone the repository and install it from within Raycast.
 
 Then, from within Raycast with developer mode enabled, import the extension.
 
+### Personal Access Token (PAT)
+
+When attempting to execute the first command from this extension, you'll be prompted to enter a Personal Access Token (PAT). You can generate a PAT on GitHub, by going to:
+
+User settings ➡️ Developer settings ➡️ Personal access tokens ➡️ Generate new token
+
+1. Add a description to the "Note" field, e.g. "Raycast GitHub"
+
+2. Select the following scopes from the list:
+  - [x] **repo**
+  - [x] **codespace**
+
+Generate the token and copy and paste it into the Raycast input.
+
 ## Commands
 
 ### Codespaces
