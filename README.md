@@ -25,8 +25,9 @@ https://github.com/settings/tokens
 1. Add a description to the "Note" field, e.g. "Raycast GitHub"
 
 2. Select the following scopes from the list:
-  - [x] **repo**
-  - [x] **codespace**
+
+- [x] **repo**
+- [x] **codespace**
 
 Generate the token and copy and paste it into the Raycast input.
 
