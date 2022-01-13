@@ -7,10 +7,10 @@ This is a custom Raycast extension I've built for myself for GitHub.
 For now, you'll need to clone the repository and install it from within Raycast.
 
 ```shell
-> git clone https://github.com/jclem/raycast-github
-> cd raycast-github
-> npm install
-> npm run build
+  git clone https://github.com/jclem/raycast-github
+  cd raycast-github
+  npm install
+  npm run build
 ```
 
 Then, from within Raycast with developer mode enabled, import the extension.
@@ -20,6 +20,7 @@ Then, from within Raycast with developer mode enabled, import the extension.
 When attempting to execute the first command from this extension, you'll be prompted to enter a Personal Access Token (PAT). You can generate a PAT on GitHub, by going to:
 
 User settings ➡️ Developer settings ➡️ Personal access tokens ➡️ Generate new token
+https://github.com/settings/tokens
 
 1. Add a description to the "Note" field, e.g. "Raycast GitHub"
 
