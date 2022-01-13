@@ -7,10 +7,10 @@ This is a custom Raycast extension I've built for myself for GitHub.
 For now, you'll need to clone the repository and install it from within Raycast.
 
 ```shell
-  git clone https://github.com/jclem/raycast-github
-  cd raycast-github
-  npm install
-  npm run build
+git clone https://github.com/jclem/raycast-github
+cd raycast-github
+npm install
+npm run build
 ```
 
 Then, from within Raycast with developer mode enabled, import the extension.
