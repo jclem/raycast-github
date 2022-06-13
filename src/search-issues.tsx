@@ -1,6 +1,7 @@
 import {RestEndpointMethodTypes} from '@octokit/plugin-rest-endpoint-methods'
 import {
   ActionPanel,
+  CopyToClipboardAction,
   Color,
   ColorLike,
   Detail,
@@ -134,7 +135,11 @@ const Actions: FC<ActionsProps> = ({item, query}) => {
           />
         }
       />
-
+      <CopyToClipboardAction
+        title="Copy URL to clipboard"
+        content={item.html_url}
+        shortcut={{modifiers: ['cmd', 'shift'], key: 'c'}}
+      />
       <ActionPanel.Item title="Save query" onAction={() => saveQuery(query)} />
     </ActionPanel>
   )

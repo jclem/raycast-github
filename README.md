@@ -56,6 +56,7 @@ This allows you to search code on GitHub, for example by entering a query such a
 - Open the search result in a web browser.
 - Open the search result in GitHub.dev. _You can also do this by hitting the "."
   key while highlighting a search result._
+- Copy the URL of the issue or PR.
 
 ### Search Commits
 
@@ -67,6 +68,7 @@ such as "Finally actually fix layout bug".
 - Open the commit in a web browser.
 - Open the commit in GitHub.dev. _You can also do this by hitting the "."
   key while highlighting a commit._
+- Copy the URL of the issue or PR.
 
 ### Search Issues & Pull Requests
 
@@ -76,6 +78,7 @@ This allows you to search issues and PRs on GitHub.
 
 - Open the issue or PR in a web browser.
 - View the full issue or PR body in Raycast.
+- Copy the URL of the issue or PR.
 
 ### Search Repositories
 
@@ -85,6 +88,7 @@ This allows you to search repositories on GitHub.
 
 - Open the repo in a web browser.
 - Open the repo readme in Raycast.
+- Copy the URL of the issue or PR.
 - Open the repo issues in a web browser.
 - Open the repo pull requests in a web browser.
 - Open the repo in GitHub.dev. _You can also do this by hitting the "." key
@@ -100,3 +104,4 @@ This allows you to search users on GitHub.
 
 - Open the user's profile in a web browser.
 - View the user's profile readme in Raycast.
+- Copy the URL of the issue or PR.

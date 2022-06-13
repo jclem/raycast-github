@@ -1,5 +1,9 @@
 import {RestEndpointMethodTypes} from '@octokit/plugin-rest-endpoint-methods'
-import {ActionPanel, OpenInBrowserAction} from '@raycast/api'
+import {
+  ActionPanel,
+  CopyToClipboardAction,
+  OpenInBrowserAction
+} from '@raycast/api'
 import {ReactElement} from 'react'
 import Search from './components/search'
 import icon from './lib/icon'
@@ -51,6 +55,11 @@ function CommitActions({item}: ActionsProps): ReactElement {
         )}`}
         icon={icon('code')}
         shortcut={{key: '.', modifiers: []}}
+      />
+      <CopyToClipboardAction
+        title="Copy URL to clipboard"
+        content={item.html_url}
+        shortcut={{modifiers: ['cmd', 'shift'], key: 'c'}}
       />
     </ActionPanel>
   )
