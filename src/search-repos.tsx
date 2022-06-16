@@ -1,10 +1,16 @@
 import proc from 'child_process'
 import {RestEndpointMethodTypes} from '@octokit/plugin-rest-endpoint-methods'
-import {ActionPanel, OpenInBrowserAction, PushAction} from '@raycast/api'
+import {
+  ActionPanel,
+  CopyToClipboardAction,
+  OpenInBrowserAction,
+  PushAction
+} from '@raycast/api'
 import {ReactElement} from 'react'
 import {Codespace} from './codespaces'
 import RepoDetail from './components/repo-detail'
 import Search from './components/search'
+import useFavorites from './hooks/use-favorites'
 import icon from './lib/icon'
 import {octokit} from './lib/octokit'
 
@@ -36,6 +42,14 @@ export default function RepoSearch(): ReactElement {
 }
 
 function RepoActions({item}: ActionsProps): ReactElement {
+  const {isFavorite, addFavorite, removeFavorite} = useFavorites()
+  const isFavoriteRepo = isFavorite(item)
+  const favoriteTitle = `${isFavoriteRepo ? 'Remove from' : 'Add to'} favorites`
+  const favoriteAction = () => {
+    isFavoriteRepo ? removeFavorite(item) : addFavorite(item)
+  }
+  const favoriteIcon = isFavoriteRepo ? 'heart-fill' : 'heart'
+
   const openOrCreateCodespace = async () => {
     const codespaces: Codespace[] = (
       await octokit.request(`GET /user/codespaces`)
@@ -79,6 +93,12 @@ function RepoActions({item}: ActionsProps): ReactElement {
         }
       />
 
+      <CopyToClipboardAction
+        title="Copy URL to clipboard"
+        content={item.html_url}
+        shortcut={{modifiers: ['cmd', 'shift'], key: 'c'}}
+      />
+
       <OpenInBrowserAction
         title="Open issues in browser"
         url={`${item.html_url}/issues`}
@@ -102,6 +122,11 @@ function RepoActions({item}: ActionsProps): ReactElement {
         title="Open or create Codespace"
         onAction={openOrCreateCodespace}
         icon={icon('codespaces')}
+      />
+      <ActionPanel.Item
+        title={favoriteTitle}
+        onAction={favoriteAction}
+        icon={icon(favoriteIcon)}
       />
     </ActionPanel>
   )

@@ -25,11 +25,12 @@ interface ActionsProps {
   query: string
 }
 
-const IssueSearch: VFC = () => (
+const GitHubIssueSearch: VFC = () => (
   <Search<Issue>
     queryKey={query => ['search', 'commits', query]}
     queryFn={async q => {
-      const resp = await octokit.search.issuesAndPullRequests({q})
+      const query = `org:github ${q}`
+      const resp = await octokit.search.issuesAndPullRequests({q: query})
       const repos = resp.data.items
       return repos
     }}
@@ -59,7 +60,7 @@ const IssueSearch: VFC = () => (
   />
 )
 
-export default IssueSearch
+export default GitHubIssueSearch
 
 const NoQuery: VFC<{setQuery: (query: string) => void}> = ({setQuery}) => {
   const {savedQueries, deleteSavedQuery} = useSavedQueries()
