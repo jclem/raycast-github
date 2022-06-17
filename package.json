@@ -48,6 +48,14 @@
       "mode": "view",
       "keywords": [
         "ghs"
+      ],
+      "preferences": [
+        {
+          "description": "Search favorite repos by default. See the \"Manage Favorite Repos\" command.",
+          "name": "favorites",
+          "title": "Search favorite repos by default",
+          "type": "checkbox"
+        }
       ]
     },
     {

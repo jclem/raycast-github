@@ -25,68 +25,90 @@ interface ActionsProps {
   query: string
 }
 
-const IssueSearch: VFC = () => (
-  <Search<Issue>
-    queryKey={query => ['search', 'commits', query]}
-    queryFn={async q => {
-      const resp = await octokit.search.issuesAndPullRequests({q})
-      const repos = resp.data.items
-      return repos
-    }}
-    itemProps={result => {
-      const nwoMatch = result.repository_url.match(
-        /^https:\/\/api\.github\.com\/repos\/([^/]+)\/([^/]+)$/
-      )
+const IssueSearch: VFC = () => {
+  return (
+    <Search<Issue>
+      queryKey={query => ['search', 'commits', query]}
+      queryFn={async q => {
+        const resp = await octokit.search.issuesAndPullRequests({q})
+        const repos = resp.data.items
+        return repos
+      }}
+      itemProps={result => {
+        const nwoMatch = result.repository_url.match(
+          /^https:\/\/api\.github\.com\/repos\/([^/]+)\/([^/]+)$/
+        )
 
-      if (!nwoMatch) {
-        return null
-      }
+        if (!nwoMatch) {
+          return null
+        }
 
-      const [, owner, repo] = nwoMatch
-      const nwo = `${owner}/${repo}`
+        const [, owner, repo] = nwoMatch
+        const nwo = `${owner}/${repo}`
 
-      return {
-        key: result.id,
-        title: result.title,
-        subtitle: result.user?.login,
-        icon: issueIcon(result),
-        accessoryTitle: nwo,
-        accessoryIcon: `https://github.com/${owner}.png`
-      }
-    }}
-    actions={Actions}
-    noQuery={NoQuery}
-  />
-)
+        return {
+          key: result.id,
+          title: result.title,
+          subtitle: result.user?.login,
+          icon: issueIcon(result),
+          accessoryTitle: nwo,
+          accessoryIcon: `https://github.com/${owner}.png`
+        }
+      }}
+      actions={Actions}
+      noQuery={NoQuery}
+    />
+  )
+}
 
 export default IssueSearch
 
-const NoQuery: VFC<{setQuery: (query: string) => void}> = ({setQuery}) => {
+type NoQueryProps = {
+  scopeByFavoriteRepos: boolean
+  setQuery: (query: string) => void
+  toggleScopeOverride: () => void
+}
+
+const NoQuery: VFC<NoQueryProps> = ({
+  setQuery,
+  scopeByFavoriteRepos,
+  toggleScopeOverride
+}) => {
   const {savedQueries, deleteSavedQuery} = useSavedQueries()
 
-  return (
-    <List onSearchTextChange={setQuery}>
-      {savedQueries.map((query, i) => (
-        <List.Item
-          key={i}
-          title={query}
-          actions={
-            <ActionPanel>
-              <ActionPanel.Item
-                title="Search"
-                onAction={() => setQuery(query)}
-              />
+  const Actions = savedQueries.map((query, i) => (
+    <List.Item
+      key={i}
+      title={query}
+      actions={
+        <ActionPanel>
+          <ActionPanel.Item title="Search" onAction={() => setQuery(query)} />
+          <ActionPanel.Item
+            title="Delete saved query"
+            onAction={() => deleteSavedQuery(query)}
+          />
+        </ActionPanel>
+      }
+    />
+  ))
 
-              <ActionPanel.Item
-                title="Delete saved query"
-                onAction={() => deleteSavedQuery(query)}
-              />
-            </ActionPanel>
-          }
-        />
-      ))}
-    </List>
+  Actions.push(
+    <List.Item
+      key="toggle"
+      title={
+        scopeByFavoriteRepos
+          ? 'Currently searching ❤️  favorite repos. Search all repos instead...'
+          : 'Currently searching all repos. Search ❤️  favorites instead...'
+      }
+      actions={
+        <ActionPanel>
+          <ActionPanel.Item title="Toggle" onAction={toggleScopeOverride} />
+        </ActionPanel>
+      }
+    />
   )
+
+  return <List onSearchTextChange={setQuery}>{Actions}</List>
 }
 
 const issueIcon = (issue: Issue): ImageLike => {
