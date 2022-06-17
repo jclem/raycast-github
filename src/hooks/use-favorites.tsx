@@ -4,15 +4,16 @@ import {useState, useEffect, useRef, useCallback} from 'react'
 import {octokit} from '../lib/octokit'
 import {Repo} from '../search-repos'
 
-type RepoSingle = RestEndpointMethodTypes['repos']['get']['response']['data']
+export type RepoSingle =
+  RestEndpointMethodTypes['repos']['get']['response']['data']
 
 const KEY = 'favorite-repos'
 
 type UseFavorites = {
-  addFavorite: (repo: Repo | RepoSingle) => void
+  addFavorite: (repo: Repo | RepoSingle | FavoriteRepoItem) => void
   addFavoriteFromQuery: (query: string) => void
   favoriteRepos: FavoriteRepoItem[]
-  isFavorite: (repo: Repo) => boolean
+  isFavorite: (repo: Repo | RepoSingle | FavoriteRepoItem) => boolean
   isFavoritable: (query: string) => boolean
   removeFavorite: (repo: Repo | FavoriteRepoItem) => void
 }
@@ -29,7 +30,9 @@ export type FavoriteRepoItem = {
   avatar_url?: string
 }
 
-const favoriteRepoItem = (repo: Repo | RepoSingle): FavoriteRepoItem => ({
+export const favoriteRepoItem = (
+  repo: Repo | RepoSingle
+): FavoriteRepoItem => ({
   id: repo.id,
   full_name: repo.full_name,
   html_url: repo.html_url,
@@ -79,7 +82,7 @@ export default function useFavorites(): UseFavorites {
   )
 
   const isFavorite = useCallback(
-    (repo: Repo): boolean => {
+    repo => {
       return favoriteRepos.some(item => item.id === repo.id)
     },
     [favoriteRepos]

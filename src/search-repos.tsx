@@ -10,7 +10,7 @@ import {ReactElement} from 'react'
 import {Codespace} from './codespaces'
 import RepoDetail from './components/repo-detail'
 import Search from './components/search'
-import useFavorites from './hooks/use-favorites'
+import useFavorites, {FavoriteRepoItem} from './hooks/use-favorites'
 import icon from './lib/icon'
 import {octokit} from './lib/octokit'
 
@@ -18,7 +18,7 @@ export type Repo =
   RestEndpointMethodTypes['search']['repos']['response']['data']['items'][number]
 
 interface ActionsProps {
-  item: Repo
+  item: Repo | FavoriteRepoItem
 }
 
 export default function RepoSearch(): ReactElement {
@@ -41,7 +41,7 @@ export default function RepoSearch(): ReactElement {
   )
 }
 
-function RepoActions({item}: ActionsProps): ReactElement {
+export function RepoActions({item}: ActionsProps): ReactElement {
   const {isFavorite, addFavorite, removeFavorite} = useFavorites()
   const isFavoriteRepo = isFavorite(item)
   const favoriteTitle = `${isFavoriteRepo ? 'Remove from' : 'Add to'} favorites`

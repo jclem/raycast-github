@@ -48,14 +48,6 @@
       "mode": "view",
       "keywords": [
         "ghs"
-      ],
-      "preferences": [
-        {
-          "description": "Search favorite repos by default. See the \"Manage Favorite Repos\" command.",
-          "name": "favorites",
-          "title": "Search favorite repos by default",
-          "type": "checkbox"
-        }
       ]
     },
     {
@@ -64,28 +56,6 @@
       "subtitle": "Browse, add and remove GitHub repos from your list of favorites",
       "description": "This command provides a way to browse, add, and remove repos from your list of favorites",
       "icon": "icons/heart.png",
-      "mode": "view",
-      "keywords": [
-        "ghs"
-      ]
-    },
-    {
-      "name": "search-github-favorites",
-      "title": "Search Favorite Issues & PRs",
-      "subtitle": "Search favorite GitHub repos for issues and pull requests",
-      "description": "This command provides a way to search issues and pull requests on GitHub. See also the \"Manage Favorite Repos\" command.",
-      "icon": "icons/issue-opened.png",
-      "mode": "view",
-      "keywords": [
-        "ghs"
-      ]
-    },
-    {
-      "name": "search-github-issues",
-      "title": "Search GitHub Org Issues & PRs",
-      "subtitle": "Search issues and pull requests in the GitHub org",
-      "description": "This command provides a way to search issues and pull requests on GitHub",
-      "icon": "icons/issue-opened.png",
       "mode": "view",
       "keywords": [
         "ghs"

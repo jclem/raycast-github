@@ -2,11 +2,14 @@ import {
   ActionPanel,
   CopyToClipboardAction,
   List,
-  OpenInBrowserAction
+  OpenInBrowserAction,
+  PushAction
 } from '@raycast/api'
 import {ReactElement, useCallback, useState, FC} from 'react'
+import RepoDetail from './components/repo-detail'
 import useFavorites, {FavoriteRepoItem} from './hooks/use-favorites'
 import icon from './lib/icon'
+import {RepoActions} from './search-repos'
 
 type FavoritesActionsProps = {
   repo: FavoriteRepoItem
@@ -32,6 +35,7 @@ const GitHubManageFavorites: FC = () => {
         key={repo.id}
         title={repo.full_name}
         icon={repo.avatar_url}
+        detail={<FavoriteDetail repo={repo} />}
         actions={
           <FavoritesActions
             repo={repo}
@@ -59,14 +63,51 @@ const GitHubManageFavorites: FC = () => {
     )
   }
 
+  const isShowingDetail = !!favoriteRepos.length && !!ListItems.length
+
   return (
-    <List searchText={query} onSearchTextChange={setQuery}>
-      {ListItems}
+    <List
+      searchText={query}
+      onSearchTextChange={setQuery}
+      isShowingDetail={isShowingDetail}
+    >
+      {ListItems.length ? (
+        ListItems
+      ) : (
+        <List.EmptyView
+          icon={icon('heart')}
+          title="No favorites found!"
+          description="Type repo/owner to add one. For example: raycast/extensions."
+        />
+      )}
     </List>
   )
 }
 
 export default GitHubManageFavorites
+
+type FavoriteDetailProps = {
+  repo: FavoriteRepoItem
+}
+
+function FavoriteDetail({repo}: FavoriteDetailProps): ReactElement {
+  return (
+    <List.Item.Detail
+      markdown={`![${repo.full_name}](${repo.avatar_url})`}
+      metadata={
+        <List.Item.Detail.Metadata>
+          {Object.entries(repo).map(([key, val]) => (
+            <List.Item.Detail.Metadata.Label
+              key={key}
+              title={key}
+              text={val?.toString()}
+            />
+          ))}
+        </List.Item.Detail.Metadata>
+      }
+    />
+  )
+}
 
 function NewFavoriteActions({
   query,
@@ -103,6 +144,16 @@ function FavoritesActions({
         title="Remove from favorites"
         onAction={onRemove}
         icon={icon('heart')}
+      />
+      <PushAction
+        title="View details"
+        target={
+          <RepoDetail
+            repo={repo.full_name}
+            actions={<RepoActions item={repo} />}
+          />
+        }
+        icon={icon('info')}
       />
       <OpenInBrowserAction
         title="Open in browser"

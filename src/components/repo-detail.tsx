@@ -1,4 +1,4 @@
-import {Detail} from '@raycast/api'
+import {List, Detail} from '@raycast/api'
 import {ReactElement} from 'react'
 import {useQuery} from 'react-query'
 import {octokit} from '../lib/octokit'
@@ -6,12 +6,14 @@ import withQueryClient from './with-query-client'
 
 interface Props {
   repo: string
-  actions: ReactElement
+  actions?: ReactElement
+  sidepanel?: boolean
 }
 
 export default withQueryClient(function RepoDetail({
   repo,
-  actions
+  actions,
+  sidepanel
 }: Props): ReactElement {
   const [owner, repoName] = repo.split('/')
 
@@ -33,7 +35,9 @@ export default withQueryClient(function RepoDetail({
     fullMarkdown = `# ${repo}\n\n*...Loading.*`
   }
 
-  return (
+  return sidepanel ? (
+    <List.Item.Detail isLoading={isLoading} markdown={fullMarkdown} />
+  ) : (
     <Detail isLoading={isLoading} markdown={fullMarkdown} actions={actions} />
   )
 })

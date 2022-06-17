@@ -12,7 +12,7 @@ import {
   PushAction,
   setLocalStorageItem
 } from '@raycast/api'
-import {FC, useEffect, useState, VFC} from 'react'
+import {FC, useEffect, useState, VFC, ReactElement} from 'react'
 import Search from './components/search'
 import icon from './lib/icon'
 import {octokit} from './lib/octokit'
@@ -64,51 +64,35 @@ const IssueSearch: VFC = () => {
 export default IssueSearch
 
 type NoQueryProps = {
-  scopeByFavoriteRepos: boolean
   setQuery: (query: string) => void
-  toggleScopeOverride: () => void
+  searchBarAccessory: ReactElement
 }
 
-const NoQuery: VFC<NoQueryProps> = ({
-  setQuery,
-  scopeByFavoriteRepos,
-  toggleScopeOverride
-}) => {
+const NoQuery: VFC<NoQueryProps> = ({setQuery, searchBarAccessory}) => {
   const {savedQueries, deleteSavedQuery} = useSavedQueries()
 
-  const Actions = savedQueries.map((query, i) => (
-    <List.Item
-      key={i}
-      title={query}
-      actions={
-        <ActionPanel>
-          <ActionPanel.Item title="Search" onAction={() => setQuery(query)} />
-          <ActionPanel.Item
-            title="Delete saved query"
-            onAction={() => deleteSavedQuery(query)}
-          />
-        </ActionPanel>
-      }
-    />
-  ))
-
-  Actions.push(
-    <List.Item
-      key="toggle"
-      title={
-        scopeByFavoriteRepos
-          ? 'Currently searching ❤️  favorite repos. Search all repos instead...'
-          : 'Currently searching all repos. Search ❤️  favorites instead...'
-      }
-      actions={
-        <ActionPanel>
-          <ActionPanel.Item title="Toggle" onAction={toggleScopeOverride} />
-        </ActionPanel>
-      }
-    />
+  return (
+    <List searchBarAccessory={searchBarAccessory} onSearchTextChange={setQuery}>
+      {savedQueries.map((query, i) => (
+        <List.Item
+          key={i}
+          title={query}
+          actions={
+            <ActionPanel>
+              <ActionPanel.Item
+                title="Search"
+                onAction={() => setQuery(query)}
+              />
+              <ActionPanel.Item
+                title="Delete saved query"
+                onAction={() => deleteSavedQuery(query)}
+              />
+            </ActionPanel>
+          }
+        />
+      ))}
+    </List>
   )
-
-  return <List onSearchTextChange={setQuery}>{Actions}</List>
 }
 
 const issueIcon = (issue: Issue): ImageLike => {
