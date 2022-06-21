@@ -12,7 +12,7 @@ import {
   PushAction,
   setLocalStorageItem
 } from '@raycast/api'
-import {FC, useEffect, useState, VFC, ReactElement} from 'react'
+import {FC, useEffect, useState, VFC} from 'react'
 import Search from './components/search'
 import icon from './lib/icon'
 import {octokit} from './lib/octokit'
@@ -25,54 +25,48 @@ interface ActionsProps {
   query: string
 }
 
-const IssueSearch: VFC = () => {
-  return (
-    <Search<Issue>
-      queryKey={query => ['search', 'commits', query]}
-      queryFn={async q => {
-        const resp = await octokit.search.issuesAndPullRequests({q})
-        const repos = resp.data.items
-        return repos
-      }}
-      itemProps={result => {
-        const nwoMatch = result.repository_url.match(
-          /^https:\/\/api\.github\.com\/repos\/([^/]+)\/([^/]+)$/
-        )
+const GitHubIssueSearch: VFC = () => (
+  <Search<Issue>
+    queryKey={query => ['search', 'commits', query]}
+    queryFn={async q => {
+      const query = `org:github ${q}`
+      const resp = await octokit.search.issuesAndPullRequests({q: query})
+      const repos = resp.data.items
+      return repos
+    }}
+    itemProps={result => {
+      const nwoMatch = result.repository_url.match(
+        /^https:\/\/api\.github\.com\/repos\/([^/]+)\/([^/]+)$/
+      )
 
-        if (!nwoMatch) {
-          return null
-        }
+      if (!nwoMatch) {
+        return null
+      }
 
-        const [, owner, repo] = nwoMatch
-        const nwo = `${owner}/${repo}`
+      const [, owner, repo] = nwoMatch
+      const nwo = `${owner}/${repo}`
 
-        return {
-          key: result.id,
-          title: result.title,
-          subtitle: result.user?.login,
-          icon: issueIcon(result),
-          accessoryTitle: nwo,
-          accessoryIcon: `https://github.com/${owner}.png`
-        }
-      }}
-      actions={Actions}
-      noQuery={NoQuery}
-    />
-  )
-}
+      return {
+        key: result.id,
+        title: result.title,
+        subtitle: result.user?.login,
+        icon: issueIcon(result),
+        accessoryTitle: nwo,
+        accessoryIcon: `https://github.com/${owner}.png`
+      }
+    }}
+    actions={Actions}
+    noQuery={NoQuery}
+  />
+)
 
-export default IssueSearch
+export default GitHubIssueSearch
 
-type NoQueryProps = {
-  setQuery: (query: string) => void
-  searchBarAccessory: ReactElement
-}
-
-const NoQuery: VFC<NoQueryProps> = ({setQuery, searchBarAccessory}) => {
+const NoQuery: VFC<{setQuery: (query: string) => void}> = ({setQuery}) => {
   const {savedQueries, deleteSavedQuery} = useSavedQueries()
 
   return (
-    <List searchBarAccessory={searchBarAccessory} onSearchTextChange={setQuery}>
+    <List onSearchTextChange={setQuery}>
       {savedQueries.map((query, i) => (
         <List.Item
           key={i}
@@ -83,6 +77,7 @@ const NoQuery: VFC<NoQueryProps> = ({setQuery, searchBarAccessory}) => {
                 title="Search"
                 onAction={() => setQuery(query)}
               />
+
               <ActionPanel.Item
                 title="Delete saved query"
                 onAction={() => deleteSavedQuery(query)}
