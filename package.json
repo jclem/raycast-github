@@ -2,6 +2,7 @@
   "name": "github",
   "owner": "github",
   "title": "GitHub",
+  "version": "1.0.0",
   "description": "Provides commands for viewing and interacting with GitHub resources",
   "icon": "mona.png",
   "author": "jclem",
@@ -136,6 +137,7 @@
     "check:lint": "eslint .",
     "fix": "run-s --continue-on-error fix:*",
     "fix:format": "prettier . --write --loglevel=warn",
-    "fix:lint": "eslint . --fix"
+    "fix:lint": "eslint . --fix",
+    "publish": "ray publish"
   }
 }
