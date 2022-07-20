@@ -1,5 +1,6 @@
 {
   "name": "github",
+  "owner": "github",
   "title": "GitHub",
   "description": "Provides commands for viewing and interacting with GitHub resources",
   "icon": "mona.png",
