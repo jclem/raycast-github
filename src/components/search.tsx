@@ -1,6 +1,6 @@
 import {List, ListItemProps} from '@raycast/api'
+import {QueryKey, useQuery} from '@tanstack/react-query'
 import {ComponentType, Key, ReactElement, useState} from 'react'
-import {QueryKey, useQuery} from 'react-query'
 import {useDebouncedValue} from '../hooks/use-debounced-value'
 import useFavorites, {FavoriteRepoItem} from '../hooks/use-favorites'
 import withQueryClient from './with-query-client'

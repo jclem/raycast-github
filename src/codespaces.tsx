@@ -1,6 +1,6 @@
 import {getLocalStorageItem, List, setLocalStorageItem} from '@raycast/api'
+import {useQuery} from '@tanstack/react-query'
 import {ReactElement, useEffect, useState} from 'react'
-import {useQuery} from 'react-query'
 import CodespaceItem from './components/codespace-item'
 import withQueryClient from './components/with-query-client'
 import {octokit} from './lib/octokit'

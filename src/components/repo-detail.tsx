@@ -1,6 +1,6 @@
-import {List, Detail} from '@raycast/api'
+import {Detail, List} from '@raycast/api'
+import {useQuery} from '@tanstack/react-query'
 import {ReactElement} from 'react'
-import {useQuery} from 'react-query'
 import {octokit} from '../lib/octokit'
 import withQueryClient from './with-query-client'
 

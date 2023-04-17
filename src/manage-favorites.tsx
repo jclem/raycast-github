@@ -5,7 +5,7 @@ import {
   OpenInBrowserAction,
   PushAction
 } from '@raycast/api'
-import {ReactElement, useCallback, useState, FC} from 'react'
+import {FC, ReactElement, useCallback, useState} from 'react'
 import RepoDetail from './components/repo-detail'
 import useFavorites, {FavoriteRepoItem} from './hooks/use-favorites'
 import icon from './lib/icon'
