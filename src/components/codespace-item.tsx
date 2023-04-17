@@ -1,4 +1,4 @@
-import {ActionPanel, List, OpenInBrowserAction} from '@raycast/api'
+import {Action, ActionPanel, List} from '@raycast/api'
 import {ReactElement} from 'react'
 import {Codespace} from '../codespaces'
 import icon from '../lib/icon'
@@ -35,20 +35,20 @@ function CodespaceActions({space}: Props): ReactElement {
 
   return (
     <ActionPanel>
-      <OpenInBrowserAction
+      <Action.OpenInBrowser
         title="Open in VSCode"
         url={codespaceVSCode}
         icon={icon('code')}
       />
 
-      <OpenInBrowserAction
+      <Action.OpenInBrowser
         title="Open in browser"
         url={space.web_url}
         icon={icon('browser')}
       />
 
       {space.state === 'Shutdown' && (
-        <ActionPanel.Item
+        <Action
           title="Start Codespace"
           onAction={startCodespace}
           icon={icon('play')}
@@ -56,14 +56,14 @@ function CodespaceActions({space}: Props): ReactElement {
       )}
 
       {space.state !== 'Shutdown' && (
-        <ActionPanel.Item
+        <Action
           title="Stop Codespace"
           onAction={stopCodespace}
           icon={icon('stop')}
         />
       )}
 
-      <ActionPanel.Item
+      <Action
         title="Delete Codespace"
         onAction={deleteCodespace}
         icon={icon('trash')}
