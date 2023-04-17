@@ -1,4 +1,4 @@
-import {ActionPanel, ListItem, OpenInBrowserAction} from '@raycast/api'
+import {ActionPanel, List, OpenInBrowserAction} from '@raycast/api'
 import {ReactElement} from 'react'
 import {Codespace} from '../codespaces'
 import icon from '../lib/icon'
@@ -13,12 +13,15 @@ interface Props {
  */
 export default function CodespaceItem({space}: Props): ReactElement {
   return (
-    <ListItem
+    <List.Item
       key={space.id}
       title={space.repository.full_name}
       subtitle={space.machine.display_name}
       icon={space.repository.owner.avatar_url}
-      accessoryTitle={space.state}
+      accessories={[
+        {text: space.display_name},
+        {text: space.state, tooltip: space.state}
+      ]}
       actions={<CodespaceActions space={space} />}
     />
   )

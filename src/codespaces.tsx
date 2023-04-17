@@ -8,6 +8,7 @@ import {octokit} from './lib/octokit'
 export interface Codespace {
   id: number
   name: string
+  display_name: string
   repository: {
     full_name: string
     owner: {
